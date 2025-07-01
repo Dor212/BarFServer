@@ -1,0 +1,65 @@
+# Tattoo Web API - Backend
+
+This project is the backend server for the Tattoo Web Client. It provides the API for managing tattoo sketches, handling user authentication, and supporting the online store functionalities. Built with Node.js, Express, and MongoDB, this API supports CRUD operations for users, products, and sketches.
+
+## Features
+
+- **User Authentication**: Users can register, log in, and manage their profiles.
+- **Tattoo Sketch Management**: Admins can upload, delete, and manage tattoo sketches for the client-side application.
+- **Product Management**: Admins can manage the online store, including adding and removing products.
+- **Admin Section**: Admins have special permissions to manage users, update their roles (admin/business), and delete users.
+- **Gallery**: Public access to the tattoo sketches organized by size (small, medium, large).
+
+## Installation
+
+To set up this project locally, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Dor212/FinalProject-Node.js-Tattoo-Web-
+   cd FinalProject-Node.js-Tattoo-Web-
+
+2. Install dependencies:
+    npm install
+
+3. Create a .env file in the root directory with the necessary environment variables:
+    MONGODB_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret
+
+4. Start the server:
+    npm run dev
+The backend will now be running locally, and you can make API requests from your front-end client.
+
+API Endpoints
+POST /api/users/register: Register a new user.
+
+POST /api/users/login: Login a user.
+
+GET /api/gallery/:category: Get a list of tattoo sketches by category (small, medium, large).
+
+POST /api/sketches: Admin only - Add a new tattoo sketch.
+
+DELETE /api/sketches/:id: Admin only - Delete a tattoo sketch.
+
+POST /api/products: Admin only - Add a new product.
+
+DELETE /api/products/:id: Admin only - Delete a product.
+
+Technologies Used
+Node.js: JavaScript runtime for building the API server.
+
+Express: Web framework for building RESTful APIs.
+
+MongoDB: NoSQL database for storing user data, tattoo sketches, and products.
+
+JWT (JSON Web Token): For user authentication and authorization.
+
+Bcryptjs: For password hashing and verification.
+
+Mongoose: ODM for interacting with MongoDB.
+
+Dotenv: For managing environment variables.
+
+License
+MIT License. See the LICENSE file for more information.
+      

@@ -1,0 +1,89 @@
+29-06-2025 | 17:17:36 | GET | /users/getAllImages | 401 | 5.927ms
+29-06-2025 | 17:17:36 | GET | /users/getAllImages | 401 | 0.874ms
+
+
+29-06-2025 | 17:18:48 | GET | /users/getAllImages | 400 | 4.301ms
+29-06-2025 | 17:18:48 | GET | /users/getAllImages | 400 | 5.085ms
+
+
+29-06-2025 | 18:51:40 | GET | /users/getAllImages | 400 | 4.016ms
+29-06-2025 | 18:51:40 | GET | /users/getAllImages | 400 | 11.498ms
+
+
+29-06-2025 | 18:55:44 | GET | /users/getAllImages | 400 | 3.892ms
+29-06-2025 | 18:55:44 | GET | /users/getAllImages | 400 | 4.393ms
+29-06-2025 | 19:02:56 | GET | /users/admin/documents | 500 | 9.454ms
+29-06-2025 | 19:03:45 | GET | /users/admin/documents | 500 | 6.238ms
+29-06-2025 | 19:03:48 | GET | /users/admin/documents | 500 | 7.008ms
+29-06-2025 | 19:03:50 | GET | /users/admin/documents | 500 | 11.277ms
+29-06-2025 | 19:03:50 | GET | /users/admin/documents | 500 | 10.023ms
+
+
+29-06-2025 | 19:04:13 | GET | /users/getAllImages | 400 | 4.287ms
+29-06-2025 | 19:04:13 | GET | /users/getAllImages | 400 | 3.339ms
+29-06-2025 | 19:04:26 | GET | /users/admin/documents | 500 | 3.508ms
+29-06-2025 | 19:04:26 | GET | /users/admin/documents | 500 | 9.453ms
+
+
+
+
+29-06-2025 | 19:04:44 | GET | /users/financial-images | 400 | 3.779ms
+29-06-2025 | 19:07:43 | GET | /users/financial-images | 400 | 2.461ms
+29-06-2025 | 19:07:43 | GET | /users/admin/documents | 500 | 4.179ms
+29-06-2025 | 19:07:45 | GET | /users/financial-images | 400 | 8.383ms
+29-06-2025 | 19:07:45 | GET | /users/financial-images | 400 | 6.364ms
+29-06-2025 | 19:07:45 | GET | /users/admin/documents | 500 | 8.316ms
+29-06-2025 | 19:07:45 | GET | /users/admin/documents | 500 | 9.643ms
+
+
+29-06-2025 | 19:08:00 | GET | /users/getAllImages | 400 | 3.266ms
+29-06-2025 | 19:08:00 | GET | /users/getAllImages | 400 | 2.910ms
+29-06-2025 | 19:08:02 | GET | /users/financial-images | 400 | 3.426ms
+29-06-2025 | 19:08:02 | GET | /users/financial-images | 400 | 3.072ms
+29-06-2025 | 19:08:02 | GET | /users/admin/documents | 500 | 6.191ms
+29-06-2025 | 19:08:02 | GET | /users/admin/documents | 500 | 7.480ms
+29-06-2025 | 19:16:18 | GET | /users/financial-images | 401 | 5.187ms
+29-06-2025 | 19:16:18 | GET | /users/financial-images | 401 | 0.836ms
+29-06-2025 | 19:16:18 | GET | /users/admin/documents | 401 | 0.883ms
+29-06-2025 | 19:16:18 | GET | /users/admin/documents | 401 | 1.545ms
+
+
+29-06-2025 | 19:16:36 | GET | /users/getAllImages | 400 | 4.264ms
+29-06-2025 | 19:16:36 | GET | /users/getAllImages | 400 | 3.661ms
+29-06-2025 | 19:19:53 | GET | /users/admin/financial-order | 404 | 1.346ms
+29-06-2025 | 19:20:24 | GET | /users/getAllImages | 400 | 2.690ms
+29-06-2025 | 19:21:01 | GET | /users/admin/financial-order | 404 | 0.841ms
+29-06-2025 | 19:22:36 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.435ms
+29-06-2025 | 19:22:36 | GET | /users/admin/financial-order | 404 | 0.793ms
+29-06-2025 | 19:22:36 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.342ms
+29-06-2025 | 19:22:36 | GET | /users/admin/financial-order | 404 | 1.214ms
+29-06-2025 | 19:22:42 | GET | /users/admin/financial-order | 404 | 0.655ms
+29-06-2025 | 19:22:45 | GET | /users/admin/financial-order | 404 | 0.895ms
+29-06-2025 | 19:22:50 | GET | /users/admin/financial-order | 404 | 0.977ms
+29-06-2025 | 19:22:50 | GET | /users/admin/financial-order | 404 | 1.157ms
+29-06-2025 | 19:23:51 | GET | /users/admin/save-financial-order | 404 | 0.673ms
+29-06-2025 | 19:23:53 | GET | /users/admin/save-financial-order | 404 | 3.040ms
+29-06-2025 | 19:23:53 | GET | /users/admin/save-financial-order | 404 | 0.833ms
+29-06-2025 | 19:24:41 | GET | /users/save-financial-order | 401 | 3.107ms
+29-06-2025 | 19:25:37 | GET | /users/financial-images | 401 | 1.604ms
+29-06-2025 | 19:25:39 | GET | /users/financial-images | 401 | 2.497ms
+29-06-2025 | 19:25:39 | GET | /users/financial-images | 401 | 0.472ms
+29-06-2025 | 19:29:18 | GET | /users/financial-images | 401 | 0.655ms
+29-06-2025 | 19:29:20 | GET | /users/financial-images | 401 | 0.498ms
+29-06-2025 | 19:29:20 | GET | /users/financial-images | 401 | 0.205ms
+
+
+29-06-2025 | 19:29:48 | GET | /users/financial-images | 400 | 5.492ms
+29-06-2025 | 19:29:48 | GET | /users/financial-images | 400 | 7.667ms
+29-06-2025 | 19:32:17 | GET | /users/financial-images | 400 | 15.985ms
+29-06-2025 | 19:32:17 | GET | /users/financial-images | 400 | 3.090ms
+
+
+29-06-2025 | 19:32:28 | GET | /users/financial-images | 400 | 4.267ms
+29-06-2025 | 19:32:28 | GET | /users/financial-images | 400 | 5.170ms
+29-06-2025 | 19:33:21 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.607ms
+29-06-2025 | 19:33:21 | GET | /users/financial-images | 401 | 0.419ms
+29-06-2025 | 19:33:21 | GET | /users/financial-images | 401 | 0.372ms
+29-06-2025 | 19:33:21 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.440ms
+29-06-2025 | 19:35:40 | GET | /users/financial-images | 401 | 0.644ms
+29-06-2025 | 19:35:40 | GET | /users/financial-images | 401 | 0.379ms

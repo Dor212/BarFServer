@@ -1,0 +1,81 @@
+
+
+01-07-2025 | 16:58:37 | GET | /users/financial-images | 400 | 3.075ms
+01-07-2025 | 16:58:38 | GET | /users/financial-images | 400 | 10.466ms
+01-07-2025 | 16:58:38 | GET | /users/admin/documents | 404 | 2.563ms
+01-07-2025 | 16:58:38 | GET | /users/admin/documents | 404 | 0.865ms
+01-07-2025 | 17:13:39 | GET | /public/uploads/documents | 404 | 5.535ms
+01-07-2025 | 17:13:39 | GET | /favicon.ico | 404 | 3.519ms
+01-07-2025 | 17:14:31 | GET | /public/uploads/documents | 404 | 2.450ms
+01-07-2025 | 17:14:48 | GET | /public/uploads/client-docs | 404 | 1.051ms
+01-07-2025 | 17:41:20 | GET | /public/uploads/documents | 404 | 2.947ms
+01-07-2025 | 17:41:36 | GET | /users/public/uploads/documents | 404 | 1.653ms
+01-07-2025 | 17:44:00 | GET | /users/public/uploads/documents | 404 | 6.126ms
+01-07-2025 | 17:44:48 | GET | /public/uploads/documents | 404 | 0.885ms
+01-07-2025 | 17:45:46 | GET | /public/uploads/documents | 404 | 4.209ms
+
+01-07-2025 | 17:46:53 | GET | /uploads/documents/ | 404 | 1.851ms
+01-07-2025 | 18:04:57 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 4.321ms
+01-07-2025 | 18:04:57 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 4.377ms
+
+
+
+01-07-2025 | 18:08:53 | GET | /users/financial-images | 400 | 5.819ms
+01-07-2025 | 18:08:53 | GET | /users/financial-images | 400 | 3.337ms
+01-07-2025 | 18:08:53 | GET | /users/admin/documents | 404 | 13.285ms
+01-07-2025 | 18:08:53 | GET | /users/admin/documents | 404 | 0.823ms
+01-07-2025 | 18:09:31 | GET | /users/list | 400 | 4.711ms
+01-07-2025 | 18:09:31 | GET | /users/list | 400 | 4.587ms
+01-07-2025 | 18:10:07 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.639ms
+01-07-2025 | 18:10:07 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.408ms
+01-07-2025 | 18:10:07 | GET | /users/list | 401 | 0.565ms
+01-07-2025 | 18:10:07 | GET | /users/list | 401 | 0.624ms
+01-07-2025 | 18:10:21 | GET | /users/list | 401 | 0.398ms
+01-07-2025 | 18:10:21 | GET | /users/list | 401 | 0.323ms
+
+
+01-07-2025 | 18:10:54 | GET | /users/list | 400 | 3.506ms
+01-07-2025 | 18:10:54 | GET | /users/list | 400 | 3.291ms
+01-07-2025 | 18:13:52 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 6.870ms
+01-07-2025 | 18:13:52 | GET | /users/list | 401 | 1.230ms
+01-07-2025 | 18:13:52 | GET | /users/list | 401 | 0.453ms
+01-07-2025 | 18:13:52 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.658ms
+
+
+01-07-2025 | 18:17:43 | GET | /users/list | 400 | 5.448ms
+01-07-2025 | 18:17:43 | GET | /users/list | 400 | 4.196ms
+01-07-2025 | 18:21:17 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 5.834ms
+01-07-2025 | 18:21:17 | GET | /users/685c0b8c4a0b1135a9974207 | 401 | 0.377ms
+01-07-2025 | 18:21:17 | GET | /users/list | 401 | 0.313ms
+01-07-2025 | 18:21:17 | GET | /users/list | 401 | 2.280ms
+01-07-2025 | 18:22:20 | GET | /users/list | 401 | 8.629ms
+01-07-2025 | 18:22:20 | GET | /users/list | 401 | 1.004ms
+01-07-2025 | 18:22:54 | GET | /users/list | 401 | 5.731ms
+01-07-2025 | 18:22:54 | GET | /users/list | 401 | 0.659ms
+01-07-2025 | 18:29:14 | GET | /users/list | 401 | 5.528ms
+01-07-2025 | 18:29:50 | GET | /users/list | 401 | 0.963ms
+01-07-2025 | 18:37:51 | GET | /users/list | 401 | 2.336ms
+01-07-2025 | 18:37:53 | GET | /users/list | 401 | 0.369ms
+01-07-2025 | 18:37:53 | GET | /users/list | 401 | 1.210ms
+01-07-2025 | 18:38:07 | GET | /users/list | 401 | 0.236ms
+
+
+
+01-07-2025 | 18:44:57 | GET | /users/list | 400 | 3.637ms
+01-07-2025 | 18:44:57 | GET | /users/list | 400 | 3.825ms
+01-07-2025 | 18:47:55 | GET | /users/list | 400 | 1.790ms
+01-07-2025 | 18:48:34 | GET | /users/list | 400 | 5.654ms
+01-07-2025 | 18:59:56 | GET | /public/uploads/documents/users/685c0b8c4a0b1135a9974207 | 404 | 4.545ms
+01-07-2025 | 18:59:56 | GET | /public/uploads/documents/users/list | 404 | 1.360ms
+01-07-2025 | 18:59:56 | GET | /public/uploads/documents/users/685c0b8c4a0b1135a9974207 | 404 | 0.605ms
+01-07-2025 | 18:59:56 | GET | /public/uploads/documents/users/list | 404 | 1.829ms
+01-07-2025 | 19:00:06 | GET | /users/list | 401 | 2.014ms
+01-07-2025 | 19:00:06 | GET | /users/list | 401 | 0.721ms
+01-07-2025 | 19:00:11 | GET | /public/uploads/documents | 404 | 0.698ms
+01-07-2025 | 19:01:12 | GET | /users/list | 401 | 0.409ms
+01-07-2025 | 19:01:12 | GET | /users/list | 401 | 0.574ms
+01-07-2025 | 19:06:39 | GET | /users/list | 401 | 6.055ms
+01-07-2025 | 19:06:39 | GET | /users/list | 401 | 0.943ms
+01-07-2025 | 19:07:20 | GET | /users/list | 401 | 0.652ms
+01-07-2025 | 19:07:20 | GET | /users/list | 401 | 1.468ms
+01-07-2025 | 19:10:43 | GET | /users/list | 401 | 2.008ms
