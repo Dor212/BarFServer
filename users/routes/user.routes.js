@@ -71,24 +71,6 @@ router.get("/", auth, isAdmin, async (req, res) => {
   }
 });
 
-router.get("/:id", auth, async (req, res) => {
-  try {
-    const user = await getUserById(req.params.id);
-    return res.json(user);
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
-});
-
-
-router.delete("/:id", auth, isAdmin, async (req, res) => {
-  try {
-    const user = await deleteUser(req.params.id);
-    return res.send("User Delete");
-  } catch (err) {
-    return res.status(500).send(err.message);
-  }
-});
 
 
 router.post("/contact", async (req, res) => {
@@ -136,32 +118,85 @@ router.post(
   }
 );
 
+router.delete("/documents/:clientName", (req, res) => {
+  const { clientName } = req.params;
 
+  const folderPath = path.join(
+    process.cwd(),
+    "public",
+    "uploads",
+    "documents",
+    clientName
+  );
 
+  fs.rm(folderPath, { recursive: true, force: true }, (err) => {
+    if (err) {
+      console.error("❌ Error deleting folder:", err);
+      return res.status(500).json({ error: "Failed to delete folder" });
+    }
+    res.json({ message: "Folder deleted successfully" });
+  });
+});
 
 router.get("/list", (req, res) => {
   try {
     const baseDir = path.join(process.cwd(), "public", "uploads", "documents");
+
     if (!fs.existsSync(baseDir)) {
-      console.log("📁 אין בכלל תיקיה:", baseDir);
       return res.json([]);
     }
 
+    // קריאת כל התיקיות (לקוחות)
     const folders = fs
       .readdirSync(baseDir, { withFileTypes: true })
       .filter((dirent) => dirent.isDirectory())
       .map((dirent) => dirent.name);
 
-    console.log("📂 רשימת תיקיות ב-documents:", folders);
+    // בניית רשימה של לקוחות עם הקבצים שלהם
+    const result = folders.map((clientName) => {
+      const clientFolderPath = path.join(baseDir, clientName);
+      const files = fs
+        .readdirSync(clientFolderPath, { withFileTypes: true })
+        .filter((dirent) => dirent.isFile())
+        .map((dirent) => {
+          const filePath = path.join(clientFolderPath, dirent.name);
+          const stat = fs.statSync(filePath);
 
-    res.json({ message: "הרשימה הודפסה בשרת", count: folders.length });
+          return {
+            filename: dirent.name,
+            path: `/uploads/documents/${clientName}/${dirent.name}`,
+            uploadedAt: stat.birthtime, // או stat.mtime אם מעדיף
+          };
+        });
+
+      return { clientName, files };
+    });
+
+    console.log("📦 JSON response:", JSON.stringify(result, null, 2));
+    res.json(result);
   } catch (err) {
-    console.error("🚨 שגיאה בקריאת documents:", err);
-    res.status(500).json({ error: "Could not list folders" });
+    console.error("🚨 Error listing documents:", err);
+    res.status(500).json({ error: "Could not list client documents" });
   }
 });
 
 
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const user = await getUserById(req.params.id);
+    return res.json(user);
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+});
 
 
+router.delete("/:id", auth, isAdmin, async (req, res) => {
+  try {
+    const user = await deleteUser(req.params.id);
+    return res.send("User Delete");
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
 export default router;
