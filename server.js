@@ -37,13 +37,7 @@ const { SERVER } = process.env;
 const PORT = process.env.PORT || 8080;
 
 // ✅ הגדרות כלליות
-app.use(
-  cors({
-    origin: ["https://barflyshker.onrender.com", "http://localhost:8080"], 
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"],
-  })
-);
+app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "5mb" }));
 app.use(morganLogger);
 
