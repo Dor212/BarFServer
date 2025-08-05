@@ -37,7 +37,13 @@ const { SERVER } = process.env;
 const PORT = process.env.PORT || 8080;
 
 // ✅ הגדרות כלליות
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "https://finalproject-client-tattooweb.onrender.com",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "5mb" }));
 app.use(morganLogger);
 
