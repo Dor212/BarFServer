@@ -1,10 +1,10 @@
 import { Router } from "express";
-import User from "../models/User.schema.js"
+import User from "../models/User.schema.js";
 import {
   addUser,
   deleteUser,
   login,
-  getUserById
+  getUserById,
 } from "../services/userDataAccess.service.js";
 import { validation } from "../../middlewares/validation.js";
 import LoginSchema from "../validations/LoginSchema.js";
@@ -13,16 +13,13 @@ import { generateToken } from "../../services/authService.js";
 import { auth } from "../../middlewares/token.js";
 import { isAdmin } from "../../middlewares/isAdmin.js";
 import nodemailer from "nodemailer";
-import {
-  createMulterForClientDocuments,
-} from "../../middlewares/upload.js";
+import { createMulterForClientDocuments } from "../../middlewares/upload.js";
 import fs from "fs";
 import path from "path";
-
+import archiver from "archiver";
 
 const router = Router();
 const uploadClientDocs = createMulterForClientDocuments();
-
 
 router.post("/register", validation(RegisterSchema), async (req, res) => {
   try {
@@ -42,11 +39,8 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
     const user = await login(email, password);
     const token = generateToken(user);
 
-    const maxAge = rememberMe
-      ? 30 * 24 * 60 * 60 * 1000 
-      : 2 * 60 * 60 * 1000;
+    const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000;
 
- 
     res.cookie("sid", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -57,7 +51,6 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
       maxAge,
     });
 
-  
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error("Login error:", err.message);
@@ -85,13 +78,11 @@ router.get("/", auth, isAdmin, async (req, res) => {
   }
 });
 
-
-
 router.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail", 
+      service: "gmail",
       auth: {
         user: process.env.MY_EMAIL,
         pass: process.env.MY_EMAIL_PASSWORD,
@@ -152,6 +143,43 @@ router.delete("/documents/:clientName", (req, res) => {
   });
 });
 
+// ↓↓↓ ZIP download route (new)
+router.get("/documents/:clientName/zip", async (req, res) => {
+  try {
+    const { clientName } = req.params;
+
+    const folderPath = path.join(
+      process.cwd(),
+      "public",
+      "uploads",
+      "documents",
+      clientName
+    );
+
+    if (!fs.existsSync(folderPath)) {
+      return res.status(404).json({ error: "Folder not found" });
+    }
+
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${clientName}.zip"`
+    );
+
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    archive.on("error", (err) => {
+      throw err;
+    });
+
+    archive.pipe(res);
+    archive.directory(folderPath, false);
+    await archive.finalize();
+  } catch (err) {
+    console.error("ZIP error:", err);
+    res.status(500).json({ error: "Failed to create zip" });
+  }
+});
+
 router.get("/list", (req, res) => {
   try {
     const baseDir = path.join(process.cwd(), "public", "uploads", "documents");
@@ -202,7 +230,6 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
-
 router.post("/logout", (req, res) => {
   res.clearCookie("sid", {
     httpOnly: true,
@@ -215,7 +242,6 @@ router.post("/logout", (req, res) => {
   return res.status(200).json({ ok: true });
 });
 
-
 router.get("/:id", auth, async (req, res) => {
   try {
     const user = await getUserById(req.params.id);
@@ -224,7 +250,6 @@ router.get("/:id", auth, async (req, res) => {
     return res.status(400).json({ error: err.message });
   }
 });
-
 
 router.delete("/:id", auth, isAdmin, async (req, res) => {
   try {
