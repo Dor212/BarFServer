@@ -18,8 +18,6 @@ import {
 } from "../../middlewares/upload.js";
 import fs from "fs";
 import path from "path";
- 
-
 
 
 const router = Router();
@@ -39,14 +37,30 @@ router.post("/register", validation(RegisterSchema), async (req, res) => {
 
 router.post("/login", validation(LoginSchema), async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe = false } = req.body;
 
     const user = await login(email, password);
-
     const token = generateToken(user);
-    res.json({ token });
+
+    const maxAge = rememberMe
+      ? 30 * 24 * 60 * 60 * 1000 
+      : 2 * 60 * 60 * 1000;
+
+ 
+    res.cookie("sid", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      domain:
+        process.env.NODE_ENV === "production" ? ".barflyshker.com" : undefined,
+      path: "/",
+      maxAge,
+    });
+
+  
+    return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("Login error:", err.message); 
+    console.error("Login error:", err.message);
 
     if (
       err.message === "User not found" ||
@@ -54,7 +68,7 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
     ) {
       return res.status(401).json({ error: "Invalid email or password" });
     } else if (err.message.includes("Your account is temporarily locked")) {
-      return res.status(403).json({ error: err.message }); 
+      return res.status(403).json({ error: err.message });
     }
     return res
       .status(500)
@@ -146,13 +160,11 @@ router.get("/list", (req, res) => {
       return res.json([]);
     }
 
-    // קריאת כל התיקיות (לקוחות)
     const folders = fs
       .readdirSync(baseDir, { withFileTypes: true })
       .filter((dirent) => dirent.isDirectory())
       .map((dirent) => dirent.name);
 
-    // בניית רשימה של לקוחות עם הקבצים שלהם
     const result = folders.map((clientName) => {
       const clientFolderPath = path.join(baseDir, clientName);
       const files = fs
@@ -178,6 +190,29 @@ router.get("/list", (req, res) => {
     console.error("🚨 Error listing documents:", err);
     res.status(500).json({ error: "Could not list client documents" });
   }
+});
+
+router.get("/me", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password -__v");
+    if (!user) return res.status(404).json({ error: "User not found" });
+    return res.json(user);
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to fetch user" });
+  }
+});
+
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("sid", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    domain:
+      process.env.NODE_ENV === "production" ? ".barflyshker.com" : undefined,
+    path: "/",
+  });
+  return res.status(200).json({ ok: true });
 });
 
 

@@ -5,6 +5,7 @@ import { morganLogger } from "./middlewares/morganLogger.js";
 import { badPathHandler } from "./middlewares/badPathHandler.js";
 import { ErrorHandler } from "./middlewares/errorHandler.js";
 import { conn } from "./services/db.services.js";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
@@ -37,6 +38,8 @@ const { SERVER } = process.env;
 const PORT = process.env.PORT || 8080;
 
 // ✅ הגדרות כלליות
+app.set("trust proxy", 1); 
+app.use(cookieParser());
 app.use(
   cors({
     origin: ["https://www.barflyshker.com", "https://barflyshker.com"],
