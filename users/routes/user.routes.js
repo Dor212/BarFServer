@@ -41,7 +41,7 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
 
     const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000;
 
-    res.cookie("token", token, {
+    res.cookie("sid", token, {
       httpOnly: true,
       secure: true,
       sameSite: "none", 
