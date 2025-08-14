@@ -41,12 +41,11 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
 
     const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000;
 
-    res.cookie("sid", token, {
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      domain:
-        process.env.NODE_ENV === "production" ? ".barflyshker.com" : undefined,
+      secure: true,
+      sameSite: "none", 
+      domain: ".barflyshker.com", 
       path: "/",
       maxAge,
     });
