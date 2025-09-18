@@ -142,7 +142,6 @@ router.delete("/documents/:clientName", (req, res) => {
   });
 });
 
-// ↓↓↓ ZIP download route (new)
 router.get("/documents/:clientName/zip", async (req, res) => {
   try {
     const { clientName } = req.params;
@@ -204,7 +203,7 @@ router.get("/list", (req, res) => {
           return {
             filename: dirent.name,
             path: `/uploads/documents/${clientName}/${dirent.name}`,
-            uploadedAt: stat.birthtime, // או stat.mtime אם מעדיף
+            uploadedAt: stat.birthtime, 
           };
         });
 

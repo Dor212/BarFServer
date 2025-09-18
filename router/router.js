@@ -8,12 +8,10 @@ import path from "path";
 
 const router = Router();
 
-// בדיקת תקינות
 router.get("/", (req, res) => {
   return res.json({ message: "Router is working" });
 });
 
-// ניהול קבצים - צפייה בלוגים והעלאה
 router.get("/logs/:date", auth, isAdmin, (req, res) => {
   try {
     const { date } = req.params;
