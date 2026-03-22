@@ -138,7 +138,7 @@ router.post("/landing-contact", async (req, res) => {
 
     await transporter.sendMail({
       from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
-      to: process.env.MY_EMAIL,
+      to: "barflyshker@gmail.com",
       replyTo: email,
       subject: `ליד חדש מדף הנחיתה | ${fullName}`,
       html: `
