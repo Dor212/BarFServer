@@ -42,10 +42,15 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["https://www.barflyshker.com", "https://barflyshker.com"],
+    origin: [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://www.barflyshker.com",
+      "https://barflyshker.com",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json({ limit: "5mb" }));

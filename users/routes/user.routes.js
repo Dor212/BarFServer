@@ -102,6 +102,69 @@ router.post("/contact", async (req, res) => {
   }
 });
 
+router.post("/landing-contact", async (req, res) => {
+  const {
+    fullName,
+    phone,
+    email,
+    incomeRange,
+    financialState,
+    hasLiabilities,
+    hadBankIssues,
+    bestTime,
+  } = req.body;
+
+  if (
+    !fullName ||
+    !phone ||
+    !email ||
+    !incomeRange ||
+    !financialState ||
+    !hasLiabilities ||
+    !hadBankIssues ||
+    !bestTime
+  ) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MY_EMAIL,
+        pass: process.env.MY_EMAIL_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
+      to: process.env.MY_EMAIL,
+      replyTo: email,
+      subject: `ליד חדש מדף הנחיתה | ${fullName}`,
+      html: `
+        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
+          <h2 style="margin-bottom: 16px;">ליד חדש מדף הנחיתה</h2>
+          <p><strong>שם מלא:</strong> ${fullName}</p>
+          <p><strong>טלפון:</strong> ${phone}</p>
+          <p><strong>אימייל:</strong> ${email}</p>
+          <hr style="margin: 20px 0;" />
+          <p><strong>טווח הכנסה חודשי:</strong> ${incomeRange}</p>
+          <p><strong>מצב כלכלי נוכחי:</strong> ${financialState}</p>
+          <p><strong>הלוואות / התחייבויות משמעותיות:</strong> ${hasLiabilities}</p>
+          <p><strong>בעיות מול בנקים / גופים פיננסיים:</strong> ${hadBankIssues}</p>
+          <p><strong>זמן נוח לשיחה:</strong> ${bestTime}</p>
+        </div>
+      `,
+    });
+
+    return res.json({ ok: true, message: "Landing lead sent successfully" });
+  } catch (error) {
+    console.error("Landing contact error:", error);
+    return res.status(500).json({ error: "Failed to send landing lead" });
+  }
+});
+
+
 router.post(
   "/documents/upload",
   uploadClientDocs.array("files"),
