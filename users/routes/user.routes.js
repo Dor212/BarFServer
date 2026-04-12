@@ -164,44 +164,6 @@ router.post("/landing-contact", async (req, res) => {
   }
 });
 
-router.post("/guide-contact", async (req, res) => {
-  const { fullName, phone, email } = req.body;
-
-  if (!fullName || !phone || !email) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.MY_EMAIL,
-        pass: process.env.MY_EMAIL_PASSWORD,
-      },
-    });
-
-    await transporter.sendMail({
-      from: `"Bar Flyshker Guide" <${process.env.MY_EMAIL}>`,
-      to: "barflyshker@gmail.com",
-      replyTo: email,
-      subject: `ליד חדש מהמדריך | ${fullName}`,
-      html: `
-        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
-          <h2 style="margin-bottom: 16px;">ליד חדש מדף המדריך</h2>
-          <p><strong>שם מלא:</strong> ${fullName}</p>
-          <p><strong>טלפון:</strong> ${phone}</p>
-          <p><strong>אימייל:</strong> ${email}</p>
-        </div>
-      `,
-    });
-
-    return res.json({ ok: true, message: "Guide lead sent successfully" });
-  } catch (error) {
-    console.error("Guide contact error:", error);
-    return res.status(500).json({ error: "Failed to send guide lead" });
-  }
-});
-
 router.post(
   "/documents/upload",
   uploadClientDocs.array("files"),
@@ -351,11 +313,10 @@ router.get("/:id", auth, async (req, res) => {
 
 router.delete("/:id", auth, isAdmin, async (req, res) => {
   try {
-    await deleteUser(req.params.id);
+    const user = await deleteUser(req.params.id);
     return res.send("User Delete");
   } catch (err) {
     return res.status(500).send(err.message);
   }
 });
-
 export default router;
