@@ -112,17 +112,22 @@ router.post("/landing-contact", async (req, res) => {
     hasLiabilities,
     hadBankIssues,
     bestTime,
+    leadSource,
   } = req.body;
 
+  const isGuideLead = leadSource === "guide-download";
+
+  if (!fullName || !phone || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   if (
-    !fullName ||
-    !phone ||
-    !email ||
-    !incomeRange ||
-    !financialState ||
-    !hasLiabilities ||
-    !hadBankIssues ||
-    !bestTime
+    !isGuideLead &&
+    (!incomeRange ||
+      !financialState ||
+      !hasLiabilities ||
+      !hadBankIssues ||
+      !bestTime)
   ) {
     return res.status(400).json({ error: "Missing required fields" });
   }
@@ -136,14 +141,24 @@ router.post("/landing-contact", async (req, res) => {
       },
     });
 
-    await transporter.sendMail({
-      from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
-      to: "barflyshker@gmail.com",
-      replyTo: email,
-      subject: `ליד חדש מדף הנחיתה | ${fullName}`,
-      html: `
+    const subject = isGuideLead
+      ? `ליד חדש להורדת מדריך | ${fullName}`
+      : `ליד חדש מדף הנחיתה | ${fullName}`;
+
+    const html = isGuideLead
+      ? `
+        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
+          <h2 style="margin-bottom: 16px;">ליד חדש להורדת מדריך</h2>
+          <p><strong>מקור ליד:</strong> דף מדריך</p>
+          <p><strong>שם מלא:</strong> ${fullName}</p>
+          <p><strong>טלפון:</strong> ${phone}</p>
+          <p><strong>אימייל:</strong> ${email}</p>
+        </div>
+      `
+      : `
         <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
           <h2 style="margin-bottom: 16px;">ליד חדש מדף הנחיתה</h2>
+          <p><strong>מקור ליד:</strong> שאלון נחיתה</p>
           <p><strong>שם מלא:</strong> ${fullName}</p>
           <p><strong>טלפון:</strong> ${phone}</p>
           <p><strong>אימייל:</strong> ${email}</p>
@@ -154,7 +169,14 @@ router.post("/landing-contact", async (req, res) => {
           <p><strong>בעיות מול בנקים / גופים פיננסיים:</strong> ${hadBankIssues}</p>
           <p><strong>זמן נוח לשיחה:</strong> ${bestTime}</p>
         </div>
-      `,
+      `;
+
+    await transporter.sendMail({
+      from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
+      to: "barflyshker@gmail.com",
+      replyTo: email,
+      subject,
+      html,
     });
 
     return res.json({ ok: true, message: "Landing lead sent successfully" });
