@@ -136,6 +136,12 @@ router.post("/landing-contact", async (req, res) => {
       },
     });
 
+    return res.status(200).json({
+      ok: true,
+      message: "route works before sendMail",
+      body: req.body,
+    });
+
     await transporter.sendMail({
       from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
       to: "barflyshker@gmail.com",
