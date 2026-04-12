@@ -141,6 +141,8 @@ router.post("/landing-contact", async (req, res) => {
       },
     });
 
+    await transporter.verify();
+
     const subject = isGuideLead
       ? `ליד חדש להורדת מדריך | ${fullName}`
       : `ליד חדש מדף הנחיתה | ${fullName}`;
@@ -172,17 +174,26 @@ router.post("/landing-contact", async (req, res) => {
       `;
 
     await transporter.sendMail({
-      from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
+      from: process.env.MY_EMAIL,
       to: "barflyshker@gmail.com",
-      replyTo: email,
+      replyTo: email?.trim() || process.env.MY_EMAIL,
       subject,
       html,
     });
 
     return res.json({ ok: true, message: "Landing lead sent successfully" });
   } catch (error) {
-    console.error("Landing contact error:", error);
-    return res.status(500).json({ error: "Failed to send landing lead" });
+    console.error("Landing contact error:");
+    console.error("message:", error.message);
+    console.error("code:", error.code);
+    console.error("command:", error.command);
+    console.error("response:", error.response);
+    console.error("full error:", error);
+
+    return res.status(500).json({
+      error: "Failed to send landing lead",
+      details: error.message,
+    });
   }
 });
 
