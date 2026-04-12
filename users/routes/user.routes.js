@@ -21,11 +21,44 @@ import archiver from "archiver";
 const router = Router();
 const uploadClientDocs = createMulterForClientDocuments();
 
+const MAIL_TO = process.env.LEADS_RECEIVER_EMAIL || "barflyshker@gmail.com";
+
+function createMailTransporter() {
+  return nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.MY_EMAIL,
+      pass: process.env.MY_EMAIL_PASSWORD,
+    },
+  });
+}
+
+function normalizeText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function logMailEnv(label) {
+  console.log(`[${label}] MAIL ENV`, {
+    MY_EMAIL_EXISTS: !!process.env.MY_EMAIL,
+    MY_EMAIL_PASSWORD_EXISTS: !!process.env.MY_EMAIL_PASSWORD,
+    MAIL_TO,
+  });
+}
+
+function logMailError(label, error) {
+  console.error(`[${label}] MAIL ERROR FULL:`, error);
+  console.error(`[${label}] MAIL ERROR MESSAGE:`, error?.message);
+  console.error(`[${label}] MAIL ERROR CODE:`, error?.code);
+  console.error(`[${label}] MAIL ERROR COMMAND:`, error?.command);
+  console.error(`[${label}] MAIL ERROR RESPONSE:`, error?.response);
+}
+
 router.post("/register", validation(RegisterSchema), async (req, res) => {
   try {
     const data = req.body;
     const newUser = await addUser(data);
-
     return res.json({ message: "User Created", newUser });
   } catch (err) {
     return res.status(500).send(err.message);
@@ -62,6 +95,7 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
     } else if (err.message.includes("Your account is temporarily locked")) {
       return res.status(403).json({ error: err.message });
     }
+
     return res
       .status(500)
       .json({ error: "An unexpected error occurred during login." });
@@ -78,41 +112,55 @@ router.get("/", auth, isAdmin, async (req, res) => {
 });
 
 router.post("/contact", async (req, res) => {
-  const { name, email, message } = req.body;
+  const name = normalizeText(req.body.name);
+  const email = normalizeText(req.body.email);
+  const message = normalizeText(req.body.message);
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.MY_EMAIL,
-        pass: process.env.MY_EMAIL_PASSWORD,
-      },
-    });
+    logMailEnv("CONTACT");
+    console.log("[CONTACT] BODY:", { name, email, message });
+
+    const transporter = createMailTransporter();
+    await transporter.verify();
 
     await transporter.sendMail({
-      from: `"Website Contact" <${process.env.SMTP_USER}>`,
-      to: "your-email@domain.com",
-      subject: `New message from ${name}`,
-      html: `<p><strong>From:</strong> ${name} (${email})</p><p>${message}</p>`,
+      from: process.env.MY_EMAIL,
+      to: MAIL_TO,
+      subject: `New contact message | ${name}`,
+      html: `
+        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8;">
+          <h2>פנייה חדשה מהאתר</h2>
+          <p><strong>שם:</strong> ${name}</p>
+          <p><strong>אימייל:</strong> ${email}</p>
+          <p><strong>הודעה:</strong> ${message}</p>
+        </div>
+      `,
     });
 
-    res.json({ message: "Email sent" });
-  } catch (err) {
-    console.error("Error sending email:", err);
-    res.status(500).json({ error: "Email failed" });
+    return res.json({ ok: true, message: "Contact email sent successfully" });
+  } catch (error) {
+    logMailError("CONTACT", error);
+    return res.status(500).json({
+      error: "Failed to send contact email",
+      details: error?.message || "Unknown mail error",
+      code: error?.code || null,
+    });
   }
 });
 
 router.post("/landing-contact", async (req, res) => {
-  const {
-    fullName,
-    phone,
-    email,
-    incomeRange,
-    financialState,
-    hasLiabilities,
-    hadBankIssues,
-    bestTime,
-  } = req.body;
+  const fullName = normalizeText(req.body.fullName);
+  const phone = normalizeText(req.body.phone);
+  const email = normalizeText(req.body.email);
+  const incomeRange = normalizeText(req.body.incomeRange);
+  const financialState = normalizeText(req.body.financialState);
+  const hasLiabilities = normalizeText(req.body.hasLiabilities);
+  const hadBankIssues = normalizeText(req.body.hadBankIssues);
+  const bestTime = normalizeText(req.body.bestTime);
 
   if (
     !fullName ||
@@ -128,24 +176,24 @@ router.post("/landing-contact", async (req, res) => {
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.MY_EMAIL,
-        pass: process.env.MY_EMAIL_PASSWORD,
-      },
+    logMailEnv("LANDING");
+    console.log("[LANDING] BODY:", {
+      fullName,
+      phone,
+      email,
+      incomeRange,
+      financialState,
+      hasLiabilities,
+      hadBankIssues,
+      bestTime,
     });
 
-    return res.status(200).json({
-      ok: true,
-      message: "route works before sendMail",
-      body: req.body,
-    });
+    const transporter = createMailTransporter();
+    await transporter.verify();
 
     await transporter.sendMail({
-      from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
-      to: "barflyshker@gmail.com",
-      replyTo: email,
+      from: process.env.MY_EMAIL,
+      to: MAIL_TO,
       subject: `ליד חדש מדף הנחיתה | ${fullName}`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
@@ -165,8 +213,57 @@ router.post("/landing-contact", async (req, res) => {
 
     return res.json({ ok: true, message: "Landing lead sent successfully" });
   } catch (error) {
-    console.error("Landing contact error:", error);
-    return res.status(500).json({ error: "Failed to send landing lead" });
+    logMailError("LANDING", error);
+    return res.status(500).json({
+      error: "Failed to send landing lead",
+      details: error?.message || "Unknown mail error",
+      code: error?.code || null,
+    });
+  }
+});
+
+router.post("/guide-contact", async (req, res) => {
+  const fullName = normalizeText(req.body.fullName);
+  const phone = normalizeText(req.body.phone);
+  const email = normalizeText(req.body.email);
+
+  if (!fullName || !phone || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    logMailEnv("GUIDE");
+    console.log("[GUIDE] BODY:", {
+      fullName,
+      phone,
+      email,
+    });
+
+    const transporter = createMailTransporter();
+    await transporter.verify();
+
+    await transporter.sendMail({
+      from: process.env.MY_EMAIL,
+      to: MAIL_TO,
+      subject: `ליד חדש מהמדריך | ${fullName}`,
+      html: `
+        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
+          <h2 style="margin-bottom: 16px;">ליד חדש מדף המדריך</h2>
+          <p><strong>שם מלא:</strong> ${fullName}</p>
+          <p><strong>טלפון:</strong> ${phone}</p>
+          <p><strong>אימייל:</strong> ${email}</p>
+        </div>
+      `,
+    });
+
+    return res.json({ ok: true, message: "Guide lead sent successfully" });
+  } catch (error) {
+    logMailError("GUIDE", error);
+    return res.status(500).json({
+      error: "Failed to send guide lead",
+      details: error?.message || "Unknown mail error",
+      code: error?.code || null,
+    });
   }
 });
 
@@ -179,6 +276,7 @@ router.post(
         filename: file.filename,
         path: file.path,
       }));
+
       res.json({
         message: "Files uploaded successfully",
         files: uploadedFiles,
@@ -206,6 +304,7 @@ router.delete("/documents/:clientName", (req, res) => {
       console.error("❌ Error deleting folder:", err);
       return res.status(500).json({ error: "Failed to delete folder" });
     }
+
     res.json({ message: "Folder deleted successfully" });
   });
 });
@@ -233,6 +332,7 @@ router.get("/documents/:clientName/zip", async (req, res) => {
     );
 
     const archive = archiver("zip", { zlib: { level: 9 } });
+
     archive.on("error", (err) => {
       throw err;
     });
@@ -305,6 +405,7 @@ router.post("/logout", (req, res) => {
       process.env.NODE_ENV === "production" ? ".barflyshker.com" : undefined,
     path: "/",
   });
+
   return res.status(200).json({ ok: true });
 });
 
@@ -319,10 +420,11 @@ router.get("/:id", auth, async (req, res) => {
 
 router.delete("/:id", auth, isAdmin, async (req, res) => {
   try {
-    const user = await deleteUser(req.params.id);
+    await deleteUser(req.params.id);
     return res.send("User Delete");
   } catch (err) {
     return res.status(500).send(err.message);
   }
 });
+
 export default router;
