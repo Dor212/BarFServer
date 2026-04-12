@@ -44,8 +44,8 @@ router.post("/login", validation(LoginSchema), async (req, res) => {
     res.cookie("sid", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none", 
-      domain: ".barflyshker.com", 
+      sameSite: "none",
+      domain: ".barflyshker.com",
       path: "/",
       maxAge,
     });
@@ -112,22 +112,17 @@ router.post("/landing-contact", async (req, res) => {
     hasLiabilities,
     hadBankIssues,
     bestTime,
-    leadSource,
   } = req.body;
 
-  const isGuideLead = leadSource === "guide-download";
-
-  if (!fullName || !phone || !email) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
   if (
-    !isGuideLead &&
-    (!incomeRange ||
-      !financialState ||
-      !hasLiabilities ||
-      !hadBankIssues ||
-      !bestTime)
+    !fullName ||
+    !phone ||
+    !email ||
+    !incomeRange ||
+    !financialState ||
+    !hasLiabilities ||
+    !hadBankIssues ||
+    !bestTime
   ) {
     return res.status(400).json({ error: "Missing required fields" });
   }
@@ -141,26 +136,14 @@ router.post("/landing-contact", async (req, res) => {
       },
     });
 
-    await transporter.verify();
-
-    const subject = isGuideLead
-      ? `ליד חדש להורדת מדריך | ${fullName}`
-      : `ליד חדש מדף הנחיתה | ${fullName}`;
-
-    const html = isGuideLead
-      ? `
-        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
-          <h2 style="margin-bottom: 16px;">ליד חדש להורדת מדריך</h2>
-          <p><strong>מקור ליד:</strong> דף מדריך</p>
-          <p><strong>שם מלא:</strong> ${fullName}</p>
-          <p><strong>טלפון:</strong> ${phone}</p>
-          <p><strong>אימייל:</strong> ${email}</p>
-        </div>
-      `
-      : `
+    await transporter.sendMail({
+      from: `"Bar Flyshker Landing" <${process.env.MY_EMAIL}>`,
+      to: "barflyshker@gmail.com",
+      replyTo: email,
+      subject: `ליד חדש מדף הנחיתה | ${fullName}`,
+      html: `
         <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
           <h2 style="margin-bottom: 16px;">ליד חדש מדף הנחיתה</h2>
-          <p><strong>מקור ליד:</strong> שאלון נחיתה</p>
           <p><strong>שם מלא:</strong> ${fullName}</p>
           <p><strong>טלפון:</strong> ${phone}</p>
           <p><strong>אימייל:</strong> ${email}</p>
@@ -171,32 +154,53 @@ router.post("/landing-contact", async (req, res) => {
           <p><strong>בעיות מול בנקים / גופים פיננסיים:</strong> ${hadBankIssues}</p>
           <p><strong>זמן נוח לשיחה:</strong> ${bestTime}</p>
         </div>
-      `;
-
-    await transporter.sendMail({
-      from: process.env.MY_EMAIL,
-      to: "barflyshker@gmail.com",
-      replyTo: email?.trim() || process.env.MY_EMAIL,
-      subject,
-      html,
+      `,
     });
 
     return res.json({ ok: true, message: "Landing lead sent successfully" });
   } catch (error) {
-    console.error("Landing contact error:");
-    console.error("message:", error.message);
-    console.error("code:", error.code);
-    console.error("command:", error.command);
-    console.error("response:", error.response);
-    console.error("full error:", error);
-
-    return res.status(500).json({
-      error: "Failed to send landing lead",
-      details: error.message,
-    });
+    console.error("Landing contact error:", error);
+    return res.status(500).json({ error: "Failed to send landing lead" });
   }
 });
 
+router.post("/guide-contact", async (req, res) => {
+  const { fullName, phone, email } = req.body;
+
+  if (!fullName || !phone || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MY_EMAIL,
+        pass: process.env.MY_EMAIL_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Bar Flyshker Guide" <${process.env.MY_EMAIL}>`,
+      to: "barflyshker@gmail.com",
+      replyTo: email,
+      subject: `ליד חדש מהמדריך | ${fullName}`,
+      html: `
+        <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.8; color: #0f172a;">
+          <h2 style="margin-bottom: 16px;">ליד חדש מדף המדריך</h2>
+          <p><strong>שם מלא:</strong> ${fullName}</p>
+          <p><strong>טלפון:</strong> ${phone}</p>
+          <p><strong>אימייל:</strong> ${email}</p>
+        </div>
+      `,
+    });
+
+    return res.json({ ok: true, message: "Guide lead sent successfully" });
+  } catch (error) {
+    console.error("Guide contact error:", error);
+    return res.status(500).json({ error: "Failed to send guide lead" });
+  }
+});
 
 router.post(
   "/documents/upload",
@@ -215,7 +219,7 @@ router.post(
       console.error("Upload error:", err);
       res.status(500).json({ error: "Upload failed" });
     }
-  }
+  },
 );
 
 router.delete("/documents/:clientName", (req, res) => {
@@ -226,7 +230,7 @@ router.delete("/documents/:clientName", (req, res) => {
     "public",
     "uploads",
     "documents",
-    clientName
+    clientName,
   );
 
   fs.rm(folderPath, { recursive: true, force: true }, (err) => {
@@ -247,7 +251,7 @@ router.get("/documents/:clientName/zip", async (req, res) => {
       "public",
       "uploads",
       "documents",
-      clientName
+      clientName,
     );
 
     if (!fs.existsSync(folderPath)) {
@@ -257,7 +261,7 @@ router.get("/documents/:clientName/zip", async (req, res) => {
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${clientName}.zip"`
+      `attachment; filename="${clientName}.zip"`,
     );
 
     const archive = archiver("zip", { zlib: { level: 9 } });
@@ -299,7 +303,7 @@ router.get("/list", (req, res) => {
           return {
             filename: dirent.name,
             path: `/uploads/documents/${clientName}/${dirent.name}`,
-            uploadedAt: stat.birthtime, 
+            uploadedAt: stat.birthtime,
           };
         });
 
@@ -347,10 +351,11 @@ router.get("/:id", auth, async (req, res) => {
 
 router.delete("/:id", auth, isAdmin, async (req, res) => {
   try {
-    const user = await deleteUser(req.params.id);
+    await deleteUser(req.params.id);
     return res.send("User Delete");
   } catch (err) {
     return res.status(500).send(err.message);
   }
 });
+
 export default router;
